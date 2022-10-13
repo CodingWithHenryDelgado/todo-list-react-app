@@ -17,7 +17,6 @@ const App = () => {
 
   const addTodo = (item) => {
     setTodoList((oldList) => [...oldList, item])
-    console.log(list)
   }
 
   const removeTodo = (id) => {
