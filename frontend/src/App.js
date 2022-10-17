@@ -1,26 +1,36 @@
 import React from "react"
 import Form from './components/Form';
+import todos from "./apis";
 import Section from "./components/Section";
 import List from './components/List';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const appTitle = "To-Do App"
 
-const list = [
-  { id: 1, title: "test #1", completed: false },
-  { id: 2, title: "test #2", completed: false },
-  { id: 3, title: "test #3", completed: false }
-]
-
 const App = () => {
-  const [todoList, setTodoList] = useState(list)
+  const [todoList, setTodoList] = useState([])
 
-  const addTodo = (item) => {
-    setTodoList((oldList) => [...oldList, item])
+  useEffect(() => {
+    async function fetchData() {
+      const { data } = await todos.get("/todos")
+      setTodoList(data)
+    }
+
+    fetchData()
+  })
+
+  const addTodo = async (item) => {
+    const { data } = await todos.post("/todos", item)
+    setTodoList((oldList) => [...oldList, data])
   }
 
-  const removeTodo = (id) => {
-    setTodoList((oldList) => oldList.filter((item) => item.id !== id))
+  const removeTodo = async (id) => {
+    await todos.delete(`/todos/${id}`)
+    setTodoList((oldList) => oldList.filter((item) => item._id !== id))
+  }
+
+  const editTodo = async (id, item) => {
+    await todos.put(`/todos/${id}`, item)
   }
 
   return <div className="ui container center aligned">
@@ -32,7 +42,11 @@ const App = () => {
     </Section>
 
     <Section>
-      <List list={todoList} removeTodoListProp={removeTodo} />
+      <List
+        editTodoListProp={editTodo}
+        list={todoList}
+        removeTodoListProp={removeTodo}
+      />
     </Section>
   </div>
 }

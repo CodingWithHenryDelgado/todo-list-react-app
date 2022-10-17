@@ -3,9 +3,11 @@ const app = express();
 const todoRoutes = require('./routes/todoRoutes');
 const PORT = 3030;
 const mongoose = require('mongoose');
+const cors = require("cors");
 const connectionOptions = { useUnifiedTopology: true, useNewUrlParser: true }
 
 app.use(express.json())
+app.use(cors())
 
 require('dotenv').config()
 
